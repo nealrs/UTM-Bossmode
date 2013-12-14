@@ -1,6 +1,6 @@
 Hi! I'm **[Neal Shyam](http://neal.rs)** and I made this on December 14, 2013 in Brooklyn NY.
-  
-****[Bossmode](http://nealshyam.com/utm)**** only does two things: 
+
+**[Bossmode](http://nealshyam.com/utm)** only does two things: 
 
 1. It constructs URLs with UTM tag strings.
 2. It shortens those URLs for easy sharing.
