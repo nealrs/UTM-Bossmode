@@ -1,0 +1,149 @@
+<!--- 
+  Hi, my neal is Neal Shyam. I made this on December 14, 2013 in Brooklyn NYC.
+  
+  Bossmode does 2 things:
+  1.) It correctly (I think) adds UTM tags to your links. 
+  2.) It shortens them for sharing.
+  I'm fairly new to GA/UTM/etc - so I'm not sure if this is super useful, but please do let me know. 
+  You can reach me at @nealrs & neal.rs. Pulls, tweets, forks, stars, comments - whatever are greatly appreciated!
+
+  blah blah blah MIT license. 
+  
+  FYI - make sure you sign up for & plug in your own bit.ly API key. Link shortening won't work without it. 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"">
+  <title>UTM Bossmode by @nealrs</title>
+
+  <link href="css/bootstrap-combined.no-icons.min.css" rel="stylesheet">  
+  <script src="js/bootstrap.min.js"></script>
+  <link href="css/font-awesome.min.css" rel="stylesheet">
+  <script src="js/jquery.min.js"></script>
+
+  <script type='text/javascript'>
+    $(document).ready(function() {
+      // resize window
+      macgap.window.resize({width: 650, height: 580});
+      
+      // update UTM tags/URL on keyup 
+      $('#source, #content, #medium, #term, #campaign, #url').keyup(function(){
+        tagURL($('#url').val());
+      });
+      
+      // run a ajax request to shorten the UTM tagged URL.
+      $('.shrink').click(function() {
+        var encodedURL = encodeURIComponent($('#tagged').val());
+        var token = 'ff64f3835a3b9b36edd4cbc65afe739d2daeb2ca'; //NRS WhoSMS key (j.mp)
+        
+        shortenURL(encodedURL, token, function(short_url) {
+          console.log(short_url);
+          $('.short').val(short_url);
+          $('.short').html(short_url);
+        });
+      });
+      
+      // click to copy to clipboard (using macgap functions)
+          $('#copy').click(function(){
+            macgap.clipboard.copy( $('#short').val() );
+      });
+      
+    });
+    
+    // progressively build UTM tagged URL
+    function tagURL(url){
+      UTM = url;
+      if ($('#source').val()){ UTM += '?utm_source=' + encodeURIComponent($('#source').val()); }
+      if ($('#medium').val()){ UTM += '&utm_medium=' + encodeURIComponent($('#medium').val()); }
+      if ($('#content').val()){ UTM += '&utm_content=' + encodeURIComponent($('#content').val()); }
+      if ($('#term').val()){ UTM += '&utm_term=' + encodeURIComponent($('#term').val()); }
+      if ($('#campaign').val()){ UTM += '&utm_campaign=' + encodeURIComponent($('#campaign').val()); }  
+      
+      // update tagged URL in form
+      $('#tagged').val(UTM);      
+    }
+    
+    // bit.ly shortening using whatever your default/custom domain is.
+    // the bit.ly api doesn't let you edit/set the hashes. you can only do that online (womp womp)
+    function shortenURL(url, token, func){
+        $.getJSON(
+          "https://api-ssl.bitly.com/v3/shorten?access_token="+token+"&longUrl="+url,
+            function(response) {
+              if (response.status_code != 200){
+                //console.log("Error: "+response.status_txt+"  - did you forget the http://?");
+
+                macgap.notice.notify({
+                  title: "Danger Will Robinson",
+                  content: "Did you forget the http://?"
+                });
+                                
+                macgap.growl.notify({
+                  title: "Danger Will Robinson",
+                  content: "Did you forget the http://?"
+                });
+              } else { func(response.data.url); }
+            }
+        );
+    }
+    
+  </script>
+</head>
+
+<body style = "margin:auto; background-image: url('img/furley_bg.png');">
+  <div class = "row">
+    <div class="span10 offset1" style="padding-left:10px; padding-right:10px;">
+      <h3>
+      	<i class="fa fa-fw fa-tags"></i> UTM Bossmode
+      	<iframe style="vertical-align:text-middle;" src="http://ghbtns.com/github-btn.html?user=nealrs&repo=UTM-Bossmode&type=watch&count=true"
+  allowtransparency="true" frameborder="0" scrolling="0" width="95" height="20"></iframe>
+  <iframe style="vertical-align:text-middle;" src="http://ghbtns.com/github-btn.html?user=nealrs&repo=UTM-Bossmode&type=fork&count=true"
+  allowtransparency="true" frameborder="0" scrolling="0" width="95" height="20"></iframe>
+      </h3>
+    
+      <p class="small">Create short links with <a href="http://blog.hubspot.com/marketing/what-are-utm-tracking-codes-ht" target="blank" title="What are UTM Tags?"> UTM tags</a>.</p>
+    
+    </div>
+  </div>
+  
+  <div class = "row ">
+    <div class="span10 offset1" style="padding-left:10px; padding-right:10px;">
+      <input class = "input span10 " id ="url" type="text" name="url" placeholder="URL without tags (e.g. http://example.com)">
+      
+      <input class = "input span2 " id ="source" type="text" name="source" placeholder="source *">
+      <input class = "input span2 " id ="medium" type="text" name="medium" placeholder="medium *" >
+      <input class = "input span2 " id ="campaign" type="text" name="campaign" placeholder="campaign *">
+      <input class = "input span2 " id ="term" type="text" name="term" placeholder="term [opt]" >
+      <input class = "input span2 " id ="content" type="text" name="content" placeholder="content [opt]">
+    
+      <input class="input span10 " id="tagged" type="text" name="tagged" style="margin-bottom:25px;" placeholder="UTM tagged URL">
+      
+      <h4 class = "visible-desktop">
+        <button class="btn btn-primary shrink " type="button" >Shorten</button>
+        <button class="btn btn-inverse " id="copy" type="button">Copy</button>
+        <span class = "short " id = "short">shortened link</span>
+      </h4>
+            
+      <h4 class = "visible-tablet">
+        <button class="btn btn-primary shrink " type="button" >Shorten</button>
+        <span class = "short ">shortened link</span>
+      </h4>
+      
+      <div class="visible-phone">
+        <div class="alert alert-info short text-center">shortened link</div>
+        <button class="btn btn-primary btn-block shrink " type="button">Get short link</button>
+      </div>
+
+    </div>
+  </div>
+  
+  <div class = "row">
+    <div class="span10 offset1" style="padding-left:10px; padding-right:10px;padding-top:10px;">
+      <p >Built with <a href="http://getbootstrap.com" target="blank" title="Bootstrap">Bootstrap</a> + <a href="https://jQuery.com" target="blank" title="jQuery">jQuery</a> + <a href="https://bit.ly" target="blank" title="bit.ly">Bit.ly</a>&nbsp; 
+      &copy; 2013 <a href="http://nealshyam.com" target="blank" title="Neal Shyam">Neal Shyam</a> <a href="http://github.com/nealrs" target="blank" title="GitHub"><i class="fa fa-fw fa-github-alt"></i></a>&nbsp;<a href="http://linkedin.com/in/nealrs" target="blank" title="LinkedIn"><i class="fa fa-fw fa-linkedin"></i></a>&nbsp;<a href="http://twitter.com/nealrs" target="blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i></a>
+    </div>
+  </div>  
+</body>
+<html>
