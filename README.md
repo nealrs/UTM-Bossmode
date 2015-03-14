@@ -6,7 +6,7 @@ Hi! I'm **[Neal Shyam](http://neal.rs)** and I made this on December 14, 2013 in
 2. It shortens those URLs for easy sharing.
 
 
-**[Live Demo](http://nealshyam.com/utm)**
+**[Live Demo](http://nealrs.github.io/UTM-Bossmode/)**
 
 I'm pretty new to Google Analytics, but I was surprised by how few UTM related projects there are on GitHub. Bossmode has already saved me a lot of time at my **[new gig](http://www.challengepost.com)**, so hopefully you'll like it too.
 
